@@ -276,10 +276,7 @@ const Home: NextPage = () => {
                       aria-hidden="true"
                     />
                   ) : null}
-                  <a
-                    href={step.href}
-                    className="relative flex items-start group"
-                  >
+                  <a className="relative flex items-start group">
                     <span className="h-9 flex items-center">
                       <span className="relative z-10 w-8 h-8 flex items-center justify-center bg-indigo-600 rounded-full group-hover:bg-indigo-800">
                         <CheckIcon
@@ -307,7 +304,6 @@ const Home: NextPage = () => {
                     />
                   ) : null}
                   <a
-                    href={step.href}
                     className="relative flex items-start group"
                     aria-current="step"
                   >
@@ -344,10 +340,7 @@ const Home: NextPage = () => {
                       aria-hidden="true"
                     />
                   ) : null}
-                  <a
-                    href={step.href}
-                    className="relative flex items-start group"
-                  >
+                  <a className="relative flex items-start group">
                     <span className="h-9 flex items-center" aria-hidden="true">
                       <span className="relative z-10 w-8 h-8 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full group-hover:border-gray-400">
                         <span className="h-2.5 w-2.5 bg-transparent rounded-full group-hover:bg-gray-300" />
