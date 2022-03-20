@@ -1,146 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { CheckIcon } from "@heroicons/react/solid";
 import { InjectedConnector } from "wagmi/connectors/injected";
-
-const pulseChainTestNet = {
-  chainId: `0x${Number(941).toString(16)}`,
-  chainName: "PulseChain Testnet V2b",
-  nativeCurrency: {
-    name: "Test Pulse",
-    symbol: "tPLS",
-    decimals: 18,
-  },
-  rpcUrls: ["https://rpc.v2b.testnet.pulsechain.com"],
-  blockExplorerUrls: ["https://scan.v2b.testnet.pulsechain.com"],
-};
+import { useNetwork, useAccount, useBalance } from "wagmi";
+import { chains } from "../lib/chains";
+import { BigNumber } from "ethers";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 const Home: NextPage = () => {
-  const connector = new InjectedConnector();
-
-  const installMetamask = async () => {
-    if (connector.getProvider() != null) {
-      setSteps(
-        steps.map((step) => {
-          if (step.id <= 1) {
-            return { ...step, status: "complete" };
-          } else if (step.id === 2) {
-            return { ...step, status: "current" };
-          } else {
-            return step;
-          }
-        })
-      );
-    }
-  };
-
-  const setNetworkToPulseChainTestnet = async () => {
-    const { ethereum } = window as any;
-    try {
-      if (!ethereum) throw new Error("No crypto wallet found");
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: pulseChainTestNet.chainId }],
-      });
-
-      setSteps(
-        steps.map((step) => {
-          if (step.id <= 2) {
-            return { ...step, status: "complete" };
-          } else if (step.id === 3) {
-            return { ...step, status: "current" };
-          } else {
-            return step;
-          }
-        })
-      );
-    } catch (switchError: any) {
-      if (switchError.code === 4902) {
-        try {
-          await ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [pulseChainTestNet],
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-  };
-
-  const watchHEX = async () => {
-    await connector.watchAsset({
-      address: "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
-      symbol: "HEX",
-    });
-
-    setSteps(
-      steps.map((step) => {
-        if (step.id <= 3) {
-          return { ...step, status: "complete" };
-        } else if (step.id === 4) {
-          return { ...step, status: "current" };
-        } else {
-          return step;
-        }
-      })
-    );
-  };
-
-  const watchHDRN = async () => {
-    await connector.watchAsset({
-      address: "0x3819f64f282bf135d62168C1e513280dAF905e06",
-      symbol: "HDRN",
-    });
-
-    setSteps(
-      steps.map((step) => {
-        if (step.id <= 4) {
-          return { ...step, status: "complete" };
-        } else if (step.id === 5) {
-          return { ...step, status: "current" };
-        } else {
-          return step;
-        }
-      })
-    );
-  };
-
-  const watchPLSX = async () => {
-    await connector.watchAsset({
-      address: "0x13Bed2Fd9F91e80B8dcec3EBa6e6aE4964CF90a0",
-      symbol: "PLSX",
-    });
-
-    setSteps(
-      steps.map((step) => {
-        if (step.id <= 5) {
-          return { ...step, status: "complete" };
-        } else if (step.id === 6) {
-          return { ...step, status: "current" };
-        } else {
-          return step;
-        }
-      })
-    );
-  };
-
-  const getTestPulseFromFaucet = async () => {
-    const pulseChainFaucetURL = "https://faucet.v2b.testnet.pulsechain.com/";
-    const win = window.open(pulseChainFaucetURL, "_blank");
-    win?.focus();
-  };
-  const swapTokensOnUniswap = async () => {
-    0x2b591e99afe9f32eaa6214f7b7629768c40eeb39;
-  };
-  const addHEXToMetamask = async () => {};
-  const stakeYourHEX = async () => {};
+  const [{ data: networkData }, switchNetwork] = useNetwork();
+  const [{ data: accountData }] = useAccount();
+  const [{ data: balanceData }, getBalance] = useBalance({
+    addressOrName: accountData?.address,
+  });
+  const connector = useMemo(
+    () => new InjectedConnector({ chains: chains }),
+    []
+  );
 
   const [steps, setSteps] = useState([
     {
@@ -150,83 +31,166 @@ const Home: NextPage = () => {
         "You do not have metamask installed, this will take you to the metamask website to install it.",
       status: "current",
       actionTitle: "Install",
-      action: installMetamask,
+      disableSkip: true,
+      action: async () => {
+        window.open("https://metamask.io/");
+      },
     },
     {
       id: 2,
       name: "Add PulseChain Testnet",
       description:
-        "You don't have the PulseChain Testnet added to your Metamask wallet. This will add the PulseChain Testnet to your MetaMask wallet and then switch to the pulsechain testnet.",
+        "You don't have the PulseChain Testnet added to your Metamask wallet. This will add the PulseChain Testnet to your MetaMask wallet and then switch to the PulseChain Testnet.",
       status: "upcoming",
       actionTitle: "Add Testnet",
-      action: setNetworkToPulseChainTestnet,
+      disableSkip: true,
+      action: async () => {
+        const result = await connector.switchChain(941);
+      },
     },
     {
       id: 3,
       name: "Add HEX",
-      description: "Add the tokens you want to watch to your Metamask wallet.",
+      description: "Watch the HEX token in your Metamask wallet.",
       status: "upcoming",
       actionTitle: "Add HEX",
-      action: watchHEX,
+      disableSkip: false,
+      action: async () => {
+        const result = await connector.watchAsset({
+          address: "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
+          symbol: "HEX",
+        });
+      },
     },
     {
       id: 4,
-      name: "Add Hedron",
-      description: "Add the tokens you want to watch to your Metamask wallet.",
+      name: "Add PulseX",
+      description: "Watch the PulseX token in your Metamask wallet.",
       status: "upcoming",
-      actionTitle: "Add HEX",
-      action: watchHDRN,
+      actionTitle: "Add PulseX",
+      disableSkip: false,
+      action: async () => {
+        const result = await connector.watchAsset({
+          address: "0x13Bed2Fd9F91e80B8dcec3EBa6e6aE4964CF90a0",
+          image:
+            "https://www.icohotlist.com/wp-content/uploads/2022/01/2022-01-14-084458.jpg",
+          symbol: "PLSX",
+        });
+      },
     },
     {
       id: 5,
-      name: "Add PulseX",
-      description: "Add the tokens you want to watch to your Metamask wallet.",
+      name: "Add Hedron",
+      description: "Watch the Hedron token in your Metamask wallet.",
       status: "upcoming",
-      actionTitle: "Add HEX",
-      action: watchPLSX,
+      actionTitle: "Add Hedron",
+      disableSkip: false,
+      action: async () => {
+        const result = await connector.watchAsset({
+          address: "0x3819f64f282bf135d62168C1e513280dAF905e06",
+          image: "https://hedron.pro/img/token/hdrn/256.png",
+          symbol: "HDRN",
+        });
+      },
+    },
+    {
+      id: 6,
+      name: "Get Test Pulse Tokens",
+      description:
+        "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the PulseChain faucet to get some test pulse tokens.",
+      status: "upcoming",
+      actionTitle: "Get Test Pulse",
+      disableSkip: false,
+      action: async () => {
+        window.open("https://faucet.v2b.testnet.pulsechain.com/");
+      },
     },
     // {
-    //   id: 4,
-    //   name: "Get Test Pulse Tokens",
-    //   description:
-    //     "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the PulseChain faucet to get some test pulse tokens.",
-    //   href: "#",
-    //   status: "upcoming",
-    //   actionTitle: "Get Test Pulse",
-    //   action: { getTestPulseFromFaucet },
-    // },
-    // {
-    //   id: 5,
+    //   id: 7,
     //   name: "Swap Two Tokens",
     //   description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
-    //   href: "#",
     //   status: "upcoming",
     //   actionTitle: "Swap Tokens",
-    //   action: { swapTokensOnUniswap },
+    //   disableSkip: false,
+    //   action: async () => {
+    //     window.open("https://uniswap.v2.testnet.pulsechain.com/#/swap ");
+    //   },
     // },
     // {
-    //   id: 6,
-    //   name: "Add HEX to your wallet",
-    //   description:
-    //     "You don't have the HEX token added to your wallet. This will add the HEX token to your wallet.",
-    //   href: "#",
-    //   status: "upcoming",
-    //   actionTitle: "Add HEX",
-    //   action: { addHEXToMetamask },
-    // },
-    // {
-    //   id: 7,
+    //   id: 8,
     //   name: "Stake Your tPLS",
     //   description:
     //     "Bonus: You can stake your tPLS tokens on a Validator to earn rewards. This will take you to the HEX staking page.",
-    //   href: "#",
     //   status: "upcoming",
     //   actionTitle: "Stake HEX",
-    //   action: { stakeYourHEX },
+    //   disableSkip: false,
+    //   action: async () => {},
     // },
   ]);
 
-  useEffect(() => {}, []);
+  const goToNextStep = useCallback(() => {
+    let currentStepId = steps.find((step) => step.status === "current")?.id;
+    if (currentStepId) {
+      const thisStepId = currentStepId;
+      const nextStepId = thisStepId + 1;
+      setSteps(
+        steps.map((step) => {
+          if (step.id <= thisStepId) {
+            return { ...step, status: "complete" };
+          } else if (step.id === nextStepId) {
+            return { ...step, status: "current" };
+          } else {
+            return step;
+          }
+        })
+      );
+    }
+  }, [steps]);
+
+  const checkMetamaskInstalled = useCallback(() => {
+    if (steps[0].status === "current" && connector.getProvider() != null) {
+      goToNextStep();
+    }
+  }, [steps, connector, goToNextStep]);
+
+  const checkPulseChainAdded = useCallback(() => {
+    if (steps[1].status === "current" && networkData.chain?.id == 941) {
+      goToNextStep();
+    }
+  }, [steps, networkData, goToNextStep]);
+
+  const checkHavePulse = useCallback(() => {
+    const balance = balanceData?.value;
+    if (steps[5].status === "current") {
+      if (balance?.gte(BigNumber.from(1))) {
+        goToNextStep();
+      } else {
+        setSteps(
+          steps.map((step) =>
+            step.id === 6
+              ? { ...step, disableSkip: true }
+              : { ...step, disableSkip: false }
+          )
+        );
+      }
+    }
+  }, [steps, balanceData, setSteps, goToNextStep]);
+
+  const checkHasMoreThanPulse = useCallback(() => {
+    if (steps[6].status === "current") {
+      goToNextStep();
+    }
+  }, [steps, goToNextStep]);
+
+  useEffect(() => {
+    checkMetamaskInstalled();
+    checkPulseChainAdded();
+    checkHavePulse();
+  }, [checkMetamaskInstalled, checkPulseChainAdded, checkHavePulse]);
+
+  const skipStep = () => {
+    goToNextStep();
+  };
 
   const hero = (
     <div className="text-center">
@@ -319,7 +283,7 @@ const Home: NextPage = () => {
                       <span className="text-sm text-gray-500">
                         {step.description}
                       </span>
-                      <span>
+                      <span className="flex flex-row space-x-4">
                         <button
                           type="button"
                           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -327,6 +291,15 @@ const Home: NextPage = () => {
                           onClick={step.action}
                         >
                           {step.actionTitle}
+                        </button>
+
+                        <button
+                          disabled={step.disableSkip}
+                          type="button"
+                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                          onClick={skipStep}
+                        >
+                          Skip
                         </button>
                       </span>
                     </span>
