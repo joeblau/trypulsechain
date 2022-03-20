@@ -52,9 +52,9 @@ export default function Steps() {
     },
     {
       id: 3,
-      name: "Add Pulse Chain Testnet",
+      name: "Add PulseChain Testnet",
       description:
-        "You don't have the Pulse Chain Testnet added to your Metamask wallet. This will add the Pulse Chain Testnet to your MetaMask wallet and then switch to the Pulse Chain Testnet.",
+        "You don't have the PulseChain Testnet added to your Metamask wallet. This will add the PulseChain Testnet to your MetaMask wallet and then switch to the PulseChain Testnet.",
       status: "upcoming",
       actionTitle: "Add Testnet",
       disableSkip: true,
@@ -114,7 +114,7 @@ export default function Steps() {
       id: 7,
       name: "Get Test Pulse Tokens",
       description:
-        "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the Pulse Chain faucet to get some test pulse tokens.",
+        "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the PulseChain faucet to get some test pulse tokens.",
       status: "upcoming",
       actionTitle: "Get Test Pulse",
       disableSkip: false,
@@ -122,17 +122,28 @@ export default function Steps() {
         window.open("https://faucet.v2b.testnet.pulsechain.com/");
       },
     },
-    // {
-    //   id: 8,
-    //   name: "Swap Two Tokens",
-    //   description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
-    //   status: "upcoming",
-    //   actionTitle: "Swap Tokens",
-    //   disableSkip: false,
-    //   action: async () => {
-    //     window.open("https://uniswap.v2.testnet.pulsechain.com/#/swap ");
-    //   },
-    // },
+    {
+      id: 8,
+      name: "Swap Two Tokens",
+      description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
+      status: "upcoming",
+      actionTitle: "Swap Tokens",
+      disableSkip: false,
+      action: async () => {
+        window.open("https://app.v2b.testnet.pulsex.com");
+      },
+    },
+    {
+      id: 9,
+      name: "Try Freepulse.io",
+      description: "Get 10,000 free test Pulse every hour.",
+      status: "upcoming",
+      actionTitle: "Try Freepulse.io",
+      disableSkip: false,
+      action: async () => {
+        window.open("https://freepulse.io");
+      },
+    },
     // {
     //   id: 9,
     //   name: "Stake Your tPLS",
@@ -234,8 +245,8 @@ export default function Steps() {
   const skipStep = () => goToNextStep();
 
   return (
-<div className="flex justify-center">
-      <nav aria-label="Progress" className="pt-12 max-w-lg">
+  <div className="flex justify-center">
+      <nav aria-label="Progress" className="py-24 max-w-lg">
         <ol role="list" className="overflow-hidden">
           {steps.map((step, stepIdx) => (
             <li

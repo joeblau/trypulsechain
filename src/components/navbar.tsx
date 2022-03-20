@@ -85,7 +85,7 @@ export default function Navbar() {
             </g>
           </svg>
           <span className="self-center text-lg font-semibold whitespace-nowrap primary-text">
-            Try Pulse Chain
+            Try PulseChain
           </span>
         </div>
         <div className="w-full block w-auto">{ToggleSwitch}</div>
