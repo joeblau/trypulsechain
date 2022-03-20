@@ -4,7 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { CheckIcon } from "@heroicons/react/solid";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { useNetwork, useAccount, useBalance } from "wagmi";
+import { useNetwork, useAccount, useBalance, useConnect } from "wagmi";
 import { chains } from "../lib/chains";
 import { BigNumber } from "ethers";
 
@@ -13,6 +13,7 @@ function classNames(...classes: any) {
 }
 
 const Home: NextPage = () => {
+  const [{ data: connectData }, connect] = useConnect();
   const [{ data: networkData }, switchNetwork] = useNetwork();
   const [{ data: accountData }] = useAccount();
   const [{ data: balanceData }, getBalance] = useBalance({
@@ -28,7 +29,7 @@ const Home: NextPage = () => {
       id: 1,
       name: "Install Metamask",
       description:
-        "You do not have metamask installed, this will take you to the metamask website to install it.",
+        "You do not have MetaMask installed, this will take you to the MetaMask website to install it.",
       status: "current",
       actionTitle: "Install",
       disableSkip: true,
@@ -38,15 +39,14 @@ const Home: NextPage = () => {
     },
     {
       id: 2,
-      name: "Connect to the network",
+      name: "Connect to the Site",
       description:
-        "You do not have metamask connected to the network, this will take you to the metamask website to connect it.",
-      status: "current",
+        "You do not have MetaMask connected to this site. This will prompt MetaMask to be able to read your balance.",
+      status: "upcoming",
       actionTitle: "Connect",
       disableSkip: true,
       action: async () => {
-        const result = await connector.connect();
-        console.log(result);
+        await connect(connector);
       },
     },
     {
@@ -167,10 +167,10 @@ const Home: NextPage = () => {
   }, [steps, connector, goToNextStep]);
 
   const checkIfMetamaskConnected = useCallback(() => {
-    if (steps[1].status === "current" && accountData?.address != null) {
+    if (steps[1].status === "current" && connectData?.connected) {
       goToNextStep();
     }
-  }, [steps, accountData, goToNextStep]);
+  }, [steps, connectData, goToNextStep]);
 
   const checkPulseChainAdded = useCallback(() => {
     if (steps[2].status === "current" && networkData.chain?.id == 941) {
