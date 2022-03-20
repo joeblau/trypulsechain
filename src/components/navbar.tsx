@@ -8,7 +8,7 @@ function classNames(...classes: any) {
 export default function Navbar() {
     
     const { resolvedTheme, setTheme } = useTheme();
-    const isDark = resolvedTheme === "dark";
+      const isDark = resolvedTheme === "dark";
 
     const ToggleSwitch = (
     <Switch

@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { Provider } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { chains } from "../lib/chains";
-import { getDefaultProvider, providers } from "ethers";
+import { providers } from "ethers";
 import { ThemeProvider } from "next-themes";
 
 
