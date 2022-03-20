@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.primary-text {
+  @apply text-gray-900 dark:text-gray-50;
+}
+
+.secondary-text {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.primary-background {
+  @apply bg-white dark:bg-black;
+}

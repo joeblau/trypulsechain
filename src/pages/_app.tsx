@@ -4,6 +4,9 @@ import { Provider } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { chains } from "../lib/chains";
 import { getDefaultProvider, providers } from "ethers";
+import { ThemeProvider } from "next-themes";
+
+
 type ProviderConfig = {
   chainId?: number;
 };
@@ -24,9 +27,11 @@ const provider = ({ chainId }: ProviderConfig) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider connectors={connectors} provider={provider} autoConnect>
-      <Component {...pageProps} />
-    </Provider>
+    <ThemeProvider attribute="class">
+      <Provider connectors={connectors} provider={provider} autoConnect>
+        <Component {...pageProps} />
+      </Provider>
+    </ThemeProvider>
   );
 }
 
