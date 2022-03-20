@@ -38,6 +38,19 @@ const Home: NextPage = () => {
     },
     {
       id: 2,
+      name: "Connect to the network",
+      description:
+        "You do not have metamask connected to the network, this will take you to the metamask website to connect it.",
+      status: "current",
+      actionTitle: "Connect",
+      disableSkip: true,
+      action: async () => {
+        const result = await connector.connect();
+        console.log(result);
+      },
+    },
+    {
+      id: 3,
       name: "Add PulseChain Testnet",
       description:
         "You don't have the PulseChain Testnet added to your Metamask wallet. This will add the PulseChain Testnet to your MetaMask wallet and then switch to the PulseChain Testnet.",
@@ -49,7 +62,7 @@ const Home: NextPage = () => {
       },
     },
     {
-      id: 3,
+      id: 4,
       name: "Add HEX",
       description: "Watch the HEX token in your Metamask wallet.",
       status: "upcoming",
@@ -63,7 +76,7 @@ const Home: NextPage = () => {
       },
     },
     {
-      id: 4,
+      id: 5,
       name: "Add PulseX",
       description: "Watch the PulseX token in your Metamask wallet.",
       status: "upcoming",
@@ -79,7 +92,7 @@ const Home: NextPage = () => {
       },
     },
     {
-      id: 5,
+      id: 6,
       name: "Add Hedron",
       description: "Watch the Hedron token in your Metamask wallet.",
       status: "upcoming",
@@ -94,7 +107,7 @@ const Home: NextPage = () => {
       },
     },
     {
-      id: 6,
+      id: 7,
       name: "Get Test Pulse Tokens",
       description:
         "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the PulseChain faucet to get some test pulse tokens.",
@@ -106,7 +119,7 @@ const Home: NextPage = () => {
       },
     },
     // {
-    //   id: 7,
+    //   id: 8,
     //   name: "Swap Two Tokens",
     //   description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
     //   status: "upcoming",
@@ -117,7 +130,7 @@ const Home: NextPage = () => {
     //   },
     // },
     // {
-    //   id: 8,
+    //   id: 9,
     //   name: "Stake Your tPLS",
     //   description:
     //     "Bonus: You can stake your tPLS tokens on a Validator to earn rewards. This will take you to the HEX staking page.",
@@ -153,21 +166,27 @@ const Home: NextPage = () => {
     }
   }, [steps, connector, goToNextStep]);
 
+  const checkIfMetamaskConnected = useCallback(() => {
+    if (steps[1].status === "current" && accountData?.address != null) {
+      goToNextStep();
+    }
+  }, [steps, accountData, goToNextStep]);
+
   const checkPulseChainAdded = useCallback(() => {
-    if (steps[1].status === "current" && networkData.chain?.id == 941) {
+    if (steps[2].status === "current" && networkData.chain?.id == 941) {
       goToNextStep();
     }
   }, [steps, networkData, goToNextStep]);
 
   const checkHavePulse = useCallback(() => {
     const balance = balanceData?.value;
-    if (steps[5].status === "current") {
+    if (steps[6].status === "current") {
       if (balance?.gte(BigNumber.from(1))) {
         goToNextStep();
       } else {
         setSteps(
           steps.map((step) =>
-            step.id === 6
+            step.id === 7
               ? { ...step, disableSkip: true }
               : { ...step, disableSkip: false }
           )
@@ -177,16 +196,22 @@ const Home: NextPage = () => {
   }, [steps, balanceData, setSteps, goToNextStep]);
 
   const checkHasMoreThanPulse = useCallback(() => {
-    if (steps[6].status === "current") {
+    if (steps[7].status === "current") {
       goToNextStep();
     }
   }, [steps, goToNextStep]);
 
   useEffect(() => {
     checkMetamaskInstalled();
+    checkIfMetamaskConnected();
     checkPulseChainAdded();
     checkHavePulse();
-  }, [checkMetamaskInstalled, checkPulseChainAdded, checkHavePulse]);
+  }, [
+    checkMetamaskInstalled,
+    checkIfMetamaskConnected,
+    checkPulseChainAdded,
+    checkHavePulse,
+  ]);
 
   const skipStep = () => {
     goToNextStep();
