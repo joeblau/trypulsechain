@@ -29,7 +29,7 @@ const navigation = {
     {
       name: 'GitHub',
       href: 'https://github.com/joeblau/trypulsechain',
-      icon: (props) => (
+      icon: (props: any) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
             fillRule="evenodd"
