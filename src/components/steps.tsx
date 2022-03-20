@@ -5,27 +5,26 @@ import { useNetwork, useAccount, useBalance, useConnect } from "wagmi";
 import { chains } from "../lib/chains";
 import { BigNumber } from "ethers";
 
-
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Steps() {
-    const [didClickHEX, setDidClickHEX] = useState<boolean>(false);
-    const [didClickPLSX, setDidClickPLSX] = useState<boolean>(false);
-    const [didClickHDRN, setDidClickHDRN] = useState<boolean>(false);
-    const [{ data: connectData }, connect] = useConnect();
-    const [{ data: networkData }, switchNetwork] = useNetwork();
-    const [{ data: accountData }] = useAccount();
-    const [{ data: balanceData }, getBalance] = useBalance({
-        addressOrName: accountData?.address,
-    });
-    const connector = useMemo(
-        () => new InjectedConnector({ chains: chains }),
-        []
-    );
+  const [didClickHEX, setDidClickHEX] = useState<boolean>(false);
+  const [didClickPLSX, setDidClickPLSX] = useState<boolean>(false);
+  const [didClickHDRN, setDidClickHDRN] = useState<boolean>(false);
+  const [{ data: connectData }, connect] = useConnect();
+  const [{ data: networkData }, switchNetwork] = useNetwork();
+  const [{ data: accountData }] = useAccount();
+  const [{ data: balanceData }, getBalance] = useBalance({
+    addressOrName: accountData?.address,
+  });
+  const connector = useMemo(
+    () => new InjectedConnector({ chains: chains }),
+    []
+  );
 
-    const [steps, setSteps] = useState([
+  const [steps, setSteps] = useState([
     {
       id: 1,
       name: "Install Metamask",
@@ -42,7 +41,7 @@ export default function Steps() {
       id: 2,
       name: "Connect to the Site",
       description:
-        "You do not have MetaMask connected to this site. This will prompt MetaMask to be able to read your balance.",
+        "Connect to trypulsechain.com in read-only mode. This allows the site to see if you've completed steps like claiming enough tPLS to use PulseX.",
       status: "upcoming",
       actionTitle: "Connect",
       disableSkip: true,
@@ -156,7 +155,7 @@ export default function Steps() {
     // },
   ]);
 
-    const goToNextStep = useCallback(() => {
+  const goToNextStep = useCallback(() => {
     let currentStepId = steps.find((step) => step.status === "current")?.id;
     if (currentStepId) {
       const thisStepId = currentStepId;
@@ -175,7 +174,7 @@ export default function Steps() {
     }
   }, [steps]);
 
-   const checkMetamaskInstalled = useCallback(() => {
+  const checkMetamaskInstalled = useCallback(() => {
     if (steps[0].status === "current" && connector.getProvider() != null) {
       goToNextStep();
     }
@@ -226,8 +225,6 @@ export default function Steps() {
     }
   }, [steps, goToNextStep]);
 
-
-
   useEffect(() => {
     checkMetamaskInstalled();
     checkIfMetamaskConnected();
@@ -245,7 +242,7 @@ export default function Steps() {
   const skipStep = () => goToNextStep();
 
   return (
-  <div className="flex justify-center">
+    <div className="flex justify-center">
       <nav aria-label="Progress" className="py-24 max-w-lg">
         <ol role="list" className="overflow-hidden">
           {steps.map((step, stepIdx) => (
