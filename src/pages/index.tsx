@@ -13,6 +13,9 @@ function classNames(...classes: any) {
 }
 
 const Home: NextPage = () => {
+  const [didClickHEX, setDidClickHEX] = useState<boolean>(false);
+  const [didClickPLSX, setDidClickPLSX] = useState<boolean>(false);
+  const [didClickHDRN, setDidClickHDRN] = useState<boolean>(false);
   const [{ data: connectData }, connect] = useConnect();
   const [{ data: networkData }, switchNetwork] = useNetwork();
   const [{ data: accountData }] = useAccount();
@@ -69,10 +72,11 @@ const Home: NextPage = () => {
       actionTitle: "Add HEX",
       disableSkip: false,
       action: async () => {
-        const result = await connector.watchAsset({
+        await connector.watchAsset({
           address: "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
           symbol: "HEX",
         });
+        setDidClickHEX(true);
       },
     },
     {
@@ -83,12 +87,13 @@ const Home: NextPage = () => {
       actionTitle: "Add PulseX",
       disableSkip: false,
       action: async () => {
-        const result = await connector.watchAsset({
+        await connector.watchAsset({
           address: "0x13Bed2Fd9F91e80B8dcec3EBa6e6aE4964CF90a0",
           image:
             "https://www.icohotlist.com/wp-content/uploads/2022/01/2022-01-14-084458.jpg",
           symbol: "PLSX",
         });
+        setDidClickPLSX(true);
       },
     },
     {
@@ -99,11 +104,12 @@ const Home: NextPage = () => {
       actionTitle: "Add Hedron",
       disableSkip: false,
       action: async () => {
-        const result = await connector.watchAsset({
+        await connector.watchAsset({
           address: "0x3819f64f282bf135d62168C1e513280dAF905e06",
           image: "https://hedron.pro/img/token/hdrn/256.png",
           symbol: "HDRN",
         });
+        setDidClickHDRN(true);
       },
     },
     {
@@ -178,6 +184,16 @@ const Home: NextPage = () => {
     }
   }, [steps, networkData, goToNextStep]);
 
+  const checkIfAddedToken = useCallback(() => {
+    if (
+      (steps[3].status === "current" && didClickHEX) ||
+      (steps[4].status === "current" && didClickPLSX) ||
+      (steps[5].status === "current" && didClickHDRN)
+    ) {
+      goToNextStep();
+    }
+  }, [steps, didClickHEX, didClickPLSX, didClickHDRN, goToNextStep]);
+
   const checkHavePulse = useCallback(() => {
     const balance = balanceData?.value;
     if (steps[6].status === "current") {
@@ -205,17 +221,17 @@ const Home: NextPage = () => {
     checkMetamaskInstalled();
     checkIfMetamaskConnected();
     checkPulseChainAdded();
+    checkIfAddedToken();
     checkHavePulse();
   }, [
     checkMetamaskInstalled,
     checkIfMetamaskConnected,
     checkPulseChainAdded,
+    checkIfAddedToken,
     checkHavePulse,
   ]);
 
-  const skipStep = () => {
-    goToNextStep();
-  };
+  const skipStep = () => goToNextStep();
 
   const hero = (
     <div className="text-center">
