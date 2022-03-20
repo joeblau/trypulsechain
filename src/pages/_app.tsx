@@ -16,24 +16,15 @@ const provider = ({ chainId }: ProviderConfig) => {
   if (chainId === 941) {
     return new providers.JsonRpcProvider(PULSE_CHAIN_RPC);
   }
-  return new providers.InfuraProvider(chainId, process.env.INFURA_API_KEY);
-};
-
-const webSocketProvider = ({ chainId }: ProviderConfig) => {
-  return new providers.InfuraWebSocketProvider(
+  return new providers.InfuraProvider(
     chainId,
-    process.env.INFURA_API_KEY
+    process.env.NEXT_PUBLIC_INFURA_API_KEY
   );
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider
-      connectors={connectors}
-      provider={provider}
-      webSocketProvider={webSocketProvider}
-      autoConnect
-    >
+    <Provider connectors={connectors} provider={provider} autoConnect>
       <Component {...pageProps} />
     </Provider>
   );
