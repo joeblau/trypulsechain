@@ -71,6 +71,7 @@ export default function Steps() {
       action: async () => {
         await connector.watchAsset({
           address: "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
+          decimals: 8,
           symbol: "HEX",
         });
         setDidClickHEX(true);
@@ -85,7 +86,7 @@ export default function Steps() {
       disableSkip: false,
       action: async () => {
         await connector.watchAsset({
-          address: "0x13Bed2Fd9F91e80B8dcec3EBa6e6aE4964CF90a0",
+          address: "0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942",
           image:
             "https://www.icohotlist.com/wp-content/uploads/2022/01/2022-01-14-084458.jpg",
           symbol: "PLSX",
