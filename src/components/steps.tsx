@@ -124,6 +124,18 @@ export default function Steps() {
     },
     {
       id: 8,
+      name: "Stake or Delegate Pulse Tokens",
+      description:
+        "Stake or delegate your pulse tokens to a validtaor. This process will allow you to passively earn pulse tokens",
+      status: "upcoming",
+      actionTitle: "Stake or Delegate",
+      disableSkip: false,
+      action: async () => {
+        window.open("https://stake.v2b.testnet.pulsechain.com/");
+      },
+    },
+    {
+      id: 9,
       name: "Swap Two Tokens",
       description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
       status: "upcoming",
@@ -134,7 +146,7 @@ export default function Steps() {
       },
     },
     {
-      id: 9,
+      id: 10,
       name: "Try Freepulse.io",
       description: "Get 10,000 free test Pulse every hour.",
       status: "upcoming",
@@ -144,16 +156,6 @@ export default function Steps() {
         window.open("https://freepulse.io");
       },
     },
-    // {
-    //   id: 9,
-    //   name: "Stake Your tPLS",
-    //   description:
-    //     "Bonus: You can stake your tPLS tokens on a Validator to earn rewards. This will take you to the HEX staking page.",
-    //   status: "upcoming",
-    //   actionTitle: "Stake HEX",
-    //   disableSkip: false,
-    //   action: async () => {},
-    // },
   ]);
 
   const goToNextStep = useCallback(() => {
