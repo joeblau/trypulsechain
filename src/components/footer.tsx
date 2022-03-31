@@ -10,6 +10,10 @@ const navigation = {
     { name: "Faucet", href: "https://faucet.v2b.testnet.pulsechain.com" },
     { name: "Block Explorer", href: "https://scan.v2b.testnet.pulsechain.com" },
     {
+      name: "Sacrifice Checker",
+      href: "https://pulsechain-sacrifice-checker.vercel.app",
+    },
+    {
       name: "Docs",
       href: "https://gitlab.com/pulsechaincom/pulsechain-testnet",
     },

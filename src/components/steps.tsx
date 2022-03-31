@@ -12,7 +12,7 @@ function classNames(...classes: any) {
 export default function Steps() {
   const [didClickHEX, setDidClickHEX] = useState<boolean>(false);
   const [didClickPLSX, setDidClickPLSX] = useState<boolean>(false);
-  const [didClickHDRN, setDidClickHDRN] = useState<boolean>(false);
+  const [didClickGetTestPLS, setDidClickGetTestPLS] = useState<boolean>(false);
   const [{ data: connectData }, connect] = useConnect();
   const [{ data: networkData }, switchNetwork] = useNetwork();
   const [{ data: accountData }] = useAccount();
@@ -96,23 +96,7 @@ export default function Steps() {
     },
     {
       id: 6,
-      name: "Add Hedron",
-      description: "Watch the Hedron token in your Metamask wallet.",
-      status: "upcoming",
-      actionTitle: "Add Hedron",
-      disableSkip: false,
-      action: async () => {
-        await connector.watchAsset({
-          address: "0x3819f64f282bf135d62168C1e513280dAF905e06",
-          image: "https://hedron.pro/img/token/hdrn/256.png",
-          symbol: "HDRN",
-        });
-        setDidClickHDRN(true);
-      },
-    },
-    {
-      id: 7,
-      name: "Get Test Pulse Tokens",
+      name: "Get Free Test Pulse Tokens",
       description:
         "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the PulseChain faucet to get some test pulse tokens.",
       status: "upcoming",
@@ -120,22 +104,11 @@ export default function Steps() {
       disableSkip: false,
       action: async () => {
         window.open("https://faucet.v2b.testnet.pulsechain.com/");
+        setDidClickGetTestPLS(true);
       },
     },
     {
-      id: 8,
-      name: "Stake or Delegate Pulse Tokens",
-      description:
-        "Stake or delegate your pulse tokens to a validtaor. This process will allow you to passively earn pulse tokens",
-      status: "upcoming",
-      actionTitle: "Stake or Delegate",
-      disableSkip: false,
-      action: async () => {
-        window.open("https://stake.v2b.testnet.pulsechain.com/");
-      },
-    },
-    {
-      id: 9,
+      id: 7,
       name: "Swap Two Tokens",
       description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
       status: "upcoming",
@@ -146,14 +119,26 @@ export default function Steps() {
       },
     },
     {
-      id: 10,
-      name: "Try Freepulse.io",
-      description: "Get 10,000 free test Pulse every hour.",
+      id: 8,
+      name: "Stake or Delegate Pulse Tokens",
+      description:
+        "Stake or delegate your pulse tokens to a validator. This process will allow you to passively earn pulse tokens",
       status: "upcoming",
-      actionTitle: "Try Freepulse.io",
+      actionTitle: "Stake or Delegate",
       disableSkip: false,
       action: async () => {
-        window.open("https://freepulse.io");
+        window.open("https://stake.v2b.testnet.pulsechain.com/");
+      },
+    },
+    {
+      id: 9,
+      name: "Stake HEX on HEX.com",
+      description: "Use HEX.com to stake your HEX tokens.",
+      status: "upcoming",
+      actionTitle: "Try HEX",
+      disableSkip: false,
+      action: async () => {
+        window.open("https://go.hex.com/");
       },
     },
   ]);
@@ -198,22 +183,21 @@ export default function Steps() {
   const checkIfAddedToken = useCallback(() => {
     if (
       (steps[3].status === "current" && didClickHEX) ||
-      (steps[4].status === "current" && didClickPLSX) ||
-      (steps[5].status === "current" && didClickHDRN)
+      (steps[4].status === "current" && didClickPLSX)
     ) {
       goToNextStep();
     }
-  }, [steps, didClickHEX, didClickPLSX, didClickHDRN, goToNextStep]);
+  }, [steps, didClickHEX, didClickPLSX, goToNextStep]);
 
   const checkHavePulse = useCallback(() => {
     const balance = balanceData?.value;
-    if (steps[6].status === "current") {
+    if (steps[5].status === "current") {
       if (balance?.gte(BigNumber.from(1))) {
         goToNextStep();
       } else {
         setSteps(
           steps.map((step) =>
-            step.id === 7
+            step.id === 6
               ? { ...step, disableSkip: true }
               : { ...step, disableSkip: false }
           )
@@ -222,11 +206,11 @@ export default function Steps() {
     }
   }, [steps, balanceData, setSteps, goToNextStep]);
 
-  const checkHasMoreThanPulse = useCallback(() => {
-    if (steps[7].status === "current") {
-      goToNextStep();
-    }
-  }, [steps, goToNextStep]);
+  // const checkHasMoreThanPulse = useCallback(() => {
+  //   if (steps[7].status === "current") {
+  //     goToNextStep();
+  //   }
+  // }, [steps, goToNextStep]);
 
   useEffect(() => {
     checkMetamaskInstalled();
