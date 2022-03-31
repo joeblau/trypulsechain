@@ -88,7 +88,7 @@ export default function Steps() {
         await connector.watchAsset({
           address: "0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942",
           image:
-            "https://www.icohotlist.com/wp-content/uploads/2022/01/2022-01-14-084458.jpg",
+            "https://app.v2b.testnet.pulsex.com/images/tokens/0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942.png",
           symbol: "PLSX",
         });
         setDidClickPLSX(true);
