@@ -1,36 +1,42 @@
-import { CheckIcon } from "@heroicons/react/solid";
+import { CheckIcon } from "@heroicons/react/24/solid";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { useNetwork, useAccount, useBalance, useConnect } from "wagmi";
-import { chains } from "../lib/chains";
-import { BigNumber } from "ethers";
+import { useEffect, useCallback } from "react";
+import {
+  useNetwork,
+  useAccount,
+  useBalance,
+  useConnect,
+  useSwitchNetwork,
+} from "wagmi";
+import { pulseChainTestnet } from "../lib/chainConfig";
+import { useStep } from "usehooks-ts";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Steps() {
-  const [didClickHEX, setDidClickHEX] = useState<boolean>(false);
-  const [didClickPLSX, setDidClickPLSX] = useState<boolean>(false);
-  const [didClickGetTestPLS, setDidClickGetTestPLS] = useState<boolean>(false);
-  const [{ data: connectData }, connect] = useConnect();
-  const [{ data: networkData }, switchNetwork] = useNetwork();
-  const [{ data: accountData }] = useAccount();
-  const [{ data: balanceData }, getBalance] = useBalance({
-    addressOrName: accountData?.address,
-  });
-  const connector = useMemo(
-    () => new InjectedConnector({ chains: chains }),
-    []
-  );
+  const tokenImage = (address: string) => {
+    return `https://app.v2b.testnet.pulsex.com/images/tokens/${address}.png`;
+  };
 
-  const [steps, setSteps] = useState([
+  const { switchNetwork } = useSwitchNetwork();
+  const { connector, status: accountStatus } = useAccount();
+  const { connect, connectors } = useConnect({
+    connector: new InjectedConnector(),
+  });
+  const { chain } = useNetwork();
+  const { address } = useAccount();
+  const { data: balanceData } = useBalance({
+    addressOrName: address,
+  });
+
+  const steps = [
     {
       id: 1,
       name: "Install Metamask",
       description:
         "You do not have MetaMask installed, this will take you to the MetaMask website to install it.",
-      status: "current",
       actionTitle: "Install",
       disableSkip: true,
       action: async () => {
@@ -42,11 +48,10 @@ export default function Steps() {
       name: "Connect to the Site",
       description:
         "Connect to trypulsechain.com in read-only mode. This allows the site to see if you've completed steps like claiming enough tPLS to use PulseX.",
-      status: "upcoming",
       actionTitle: "Connect",
       disableSkip: true,
       action: async () => {
-        await connect(connector);
+        await connect();
       },
     },
     {
@@ -54,44 +59,40 @@ export default function Steps() {
       name: "Add PulseChain Testnet",
       description:
         "You don't have the PulseChain Testnet added to your Metamask wallet. This will add the PulseChain Testnet to your MetaMask wallet and then switch to the PulseChain Testnet.",
-      status: "upcoming",
       actionTitle: "Add Testnet",
       disableSkip: true,
       action: async () => {
-        const result = await connector.switchChain(941);
+        await switchNetwork?.(pulseChainTestnet.id);
       },
     },
     {
       id: 4,
       name: "Add HEX",
       description: "Watch the HEX token in your Metamask wallet.",
-      status: "upcoming",
       actionTitle: "Add HEX",
       disableSkip: false,
       action: async () => {
-        await connector.watchAsset({
+        connector?.watchAsset?.({
           address: "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
-          decimals: 8,
+          image: tokenImage("0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39"),
           symbol: "HEX",
         });
-        setDidClickHEX(true);
+        goToNextStep();
       },
     },
     {
       id: 5,
       name: "Add PulseX",
       description: "Watch the PulseX token in your Metamask wallet.",
-      status: "upcoming",
       actionTitle: "Add PulseX",
       disableSkip: false,
       action: async () => {
-        await connector.watchAsset({
+        connector?.watchAsset?.({
           address: "0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942",
-          image:
-            "https://app.v2b.testnet.pulsex.com/images/tokens/0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942.png",
+          image: tokenImage("0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942"),
           symbol: "PLSX",
         });
-        setDidClickPLSX(true);
+        goToNextStep();
       },
     },
     {
@@ -99,23 +100,22 @@ export default function Steps() {
       name: "Get Free Test Pulse Tokens",
       description:
         "Your current wallet does not have any test pulse tokens (tPLS). This will take you to the PulseChain faucet to get some test pulse tokens.",
-      status: "upcoming",
       actionTitle: "Get Test Pulse",
-      disableSkip: false,
+      disableSkip: balanceData?.value.isZero() ?? true,
       action: async () => {
         window.open("https://faucet.v2b.testnet.pulsechain.com/");
-        setDidClickGetTestPLS(true);
+        goToNextStep();
       },
     },
     {
       id: 7,
       name: "Swap Two Tokens",
       description: "Use uniswap on test net to swap your tPLS tokens for HEX.",
-      status: "upcoming",
       actionTitle: "Swap Tokens",
       disableSkip: false,
       action: async () => {
         window.open("https://app.v2b.testnet.pulsex.com");
+        goToNextStep();
       },
     },
     {
@@ -123,110 +123,71 @@ export default function Steps() {
       name: "Stake or Delegate Pulse Tokens",
       description:
         "Stake or delegate your pulse tokens to a validator. This process will allow you to passively earn pulse tokens",
-      status: "upcoming",
       actionTitle: "Stake or Delegate",
       disableSkip: false,
       action: async () => {
         window.open("https://stake.v2b.testnet.pulsechain.com/");
+        goToNextStep();
       },
     },
     {
       id: 9,
       name: "Stake HEX on HEX.com",
       description: "Use HEX.com to stake your HEX tokens.",
-      status: "upcoming",
       actionTitle: "Try HEX",
       disableSkip: false,
       action: async () => {
         window.open("https://go.hex.com/");
+        goToNextStep();
       },
     },
-  ]);
+    {
+      id: 10,
+      name: "Success!",
+      description: "You completed the PulseChian Testnet introuduction.",
+    },
+  ];
 
-  const goToNextStep = useCallback(() => {
-    let currentStepId = steps.find((step) => step.status === "current")?.id;
-    if (currentStepId) {
-      const thisStepId = currentStepId;
-      const nextStepId = thisStepId + 1;
-      setSteps(
-        steps.map((step) => {
-          if (step.id <= thisStepId) {
-            return { ...step, status: "complete" };
-          } else if (step.id === nextStepId) {
-            return { ...step, status: "current" };
-          } else {
-            return step;
-          }
-        })
-      );
-    }
-  }, [steps]);
+  const [currentStep, helpers] = useStep(steps.length);
+  const {
+    canGoToPrevStep,
+    canGoToNextStep,
+    goToNextStep,
+    goToPrevStep,
+    reset,
+    setStep,
+  } = helpers;
 
   const checkMetamaskInstalled = useCallback(() => {
-    if (steps[0].status === "current" && connector.getProvider() != null) {
-      goToNextStep();
-    }
-  }, [steps, connector, goToNextStep]);
+    connectors.map((connector) => {
+      if (currentStep === 1 && connector.name === "MetaMask") {
+        setStep(2);
+      }
+    });
+  }, [steps, connector, connectors, goToNextStep]);
 
   const checkIfMetamaskConnected = useCallback(() => {
-    if (steps[1].status === "current" && connectData?.connected) {
-      goToNextStep();
+    console.log(accountStatus);
+    if (currentStep === 2 && accountStatus == "connected") {
+      setStep(3);
+    } else if (currentStep > 2 && accountStatus !== "connected") {
+      setStep(2);
     }
-  }, [steps, connectData, goToNextStep]);
+  }, [steps, accountStatus]);
 
   const checkPulseChainAdded = useCallback(() => {
-    if (steps[2].status === "current" && networkData.chain?.id == 941) {
-      goToNextStep();
+    if (currentStep === 3 && chain?.id == 941) {
+      setStep(4);
+    } else if (currentStep > 3 && chain?.id != 941) {
+      setStep(3);
     }
-  }, [steps, networkData, goToNextStep]);
-
-  const checkIfAddedToken = useCallback(() => {
-    if (
-      (steps[3].status === "current" && didClickHEX) ||
-      (steps[4].status === "current" && didClickPLSX)
-    ) {
-      goToNextStep();
-    }
-  }, [steps, didClickHEX, didClickPLSX, goToNextStep]);
-
-  const checkHavePulse = useCallback(() => {
-    const balance = balanceData?.value;
-    if (steps[5].status === "current") {
-      if (balance?.gte(BigNumber.from(1))) {
-        goToNextStep();
-      } else {
-        setSteps(
-          steps.map((step) =>
-            step.id === 6
-              ? { ...step, disableSkip: true }
-              : { ...step, disableSkip: false }
-          )
-        );
-      }
-    }
-  }, [steps, balanceData, setSteps, goToNextStep]);
-
-  // const checkHasMoreThanPulse = useCallback(() => {
-  //   if (steps[7].status === "current") {
-  //     goToNextStep();
-  //   }
-  // }, [steps, goToNextStep]);
+  }, [steps, chain]);
 
   useEffect(() => {
     checkMetamaskInstalled();
     checkIfMetamaskConnected();
     checkPulseChainAdded();
-    checkIfAddedToken();
-    checkHavePulse();
-  }, [
-    checkMetamaskInstalled,
-    checkIfMetamaskConnected,
-    checkPulseChainAdded,
-    checkIfAddedToken,
-    checkHavePulse,
-  ]);
-
-  const skipStep = () => goToNextStep();
+  }, [checkMetamaskInstalled, checkIfMetamaskConnected, checkPulseChainAdded]);
 
   return (
     <div className="flex justify-center">
@@ -240,7 +201,7 @@ export default function Steps() {
                 "relative"
               )}
             >
-              {step.status === "complete" ? (
+              {currentStep > step.id ? (
                 <>
                   {stepIdx !== steps.length - 1 ? (
                     <div
@@ -267,7 +228,7 @@ export default function Steps() {
                     </span>
                   </a>
                 </>
-              ) : step.status === "current" ? (
+              ) : currentStep === step.id ? (
                 <>
                   {stepIdx !== steps.length - 1 ? (
                     <div
@@ -292,22 +253,26 @@ export default function Steps() {
                         {step.description}
                       </span>
                       <span className="flex flex-row space-x-4">
-                        <button
-                          type="button"
-                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          onClick={step.action}
-                        >
-                          {step.actionTitle}
-                        </button>
+                        {step.actionTitle && (
+                          <button
+                            type="button"
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            onClick={step.action}
+                          >
+                            {step.actionTitle}
+                          </button>
+                        )}
 
-                        <button
-                          disabled={step.disableSkip}
-                          type="button"
-                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                          onClick={skipStep}
-                        >
-                          Skip
-                        </button>
+                        {step.disableSkip !== undefined && (
+                          <button
+                            disabled={step.disableSkip}
+                            type="button"
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                            onClick={goToNextStep}
+                          >
+                            Skip
+                          </button>
+                        )}
                       </span>
                     </span>
                   </a>
