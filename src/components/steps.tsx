@@ -9,7 +9,9 @@ import {
   useSwitchNetwork,
 } from "wagmi";
 import { pulseChainTestnet } from "../lib/chainConfig";
+import { confettiConfig } from "../lib/confettiConfig";
 import { useStep } from "usehooks-ts";
+import Confetti from "react-dom-confetti";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -149,14 +151,7 @@ export default function Steps() {
   ];
 
   const [currentStep, helpers] = useStep(steps.length);
-  const {
-    canGoToPrevStep,
-    canGoToNextStep,
-    goToNextStep,
-    goToPrevStep,
-    reset,
-    setStep,
-  } = helpers;
+  const { goToNextStep, setStep } = helpers;
 
   const checkMetamaskInstalled = useCallback(() => {
     connectors.map((connector) => {
@@ -252,6 +247,7 @@ export default function Steps() {
                       <span className="text-sm text-gray-500">
                         {step.description}
                       </span>
+
                       <span className="flex flex-row space-x-4">
                         {step.actionTitle && (
                           <button
@@ -305,6 +301,12 @@ export default function Steps() {
             </li>
           ))}
         </ol>
+        <div className="grid justify-items-center">
+          <Confetti
+            active={currentStep === steps.length}
+            config={confettiConfig}
+          />
+        </div>
       </nav>
     </div>
   );
