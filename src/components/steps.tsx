@@ -1,4 +1,3 @@
-import { CheckIcon } from "@heroicons/react/24/solid";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { useEffect, useCallback } from "react";
 import {
@@ -9,19 +8,16 @@ import {
   useSwitchNetwork,
 } from "wagmi";
 import { pulseChainTestnet } from "../lib/chainConfig";
-import { confettiConfig } from "../lib/confettiConfig";
 import { useStep } from "usehooks-ts";
-import Confetti from "react-dom-confetti";
-
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
-}
+import { useWindowSize } from "react-use";
+import Confetti from "react-confetti";
 
 export default function Steps() {
   const tokenImage = (address: string) => {
     return `https://app.v2b.testnet.pulsex.com/images/tokens/${address}.png`;
   };
 
+  const { width, height } = useWindowSize();
   const { switchNetwork } = useSwitchNetwork();
   const { connector, status: accountStatus } = useAccount();
   const { connect, connectors } = useConnect({
@@ -184,129 +180,72 @@ export default function Steps() {
     checkPulseChainAdded();
   }, [checkMetamaskInstalled, checkIfMetamaskConnected, checkPulseChainAdded]);
 
+  const card = (step: any) => {
+    return (
+      <div className="card card-compact">
+        <div className="card-body text-left">
+          <h2 className="card-title">{step.name}</h2>
+          <p>{step.description}</p>
+          {currentStep === step.id && (
+            <div className="card-actions justify-start">
+              {step.actionTitle && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={step.action}
+                >
+                  {step.actionTitle}
+                </button>
+              )}
+
+              {step.disableSkip !== undefined && (
+                <button
+                  disabled={step.disableSkip}
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={goToNextStep}
+                >
+                  Skip
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex justify-center">
-      <nav aria-label="Progress" className="py-24 max-w-lg">
-        <ol role="list" className="overflow-hidden">
-          {steps.map((step, stepIdx) => (
-            <li
-              key={step.name}
-              className={classNames(
-                stepIdx !== steps.length - 1 ? "pb-10" : "",
-                "relative"
-              )}
-            >
-              {currentStep > step.id ? (
-                <>
-                  {stepIdx !== steps.length - 1 ? (
-                    <div
-                      className="-ml-px absolute mt-0.5 top-4 left-4 w-0.5 h-full bg-blue-600"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  <a className="relative flex items-start group">
-                    <span className="h-9 flex items-center">
-                      <span className="relative z-10 w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full">
-                        <CheckIcon
-                          className="w-5 h-5 text-white"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    </span>
-                    <span className="ml-4 min-w-0 flex flex-col">
-                      <span className="text-xs font-semibold tracking-wide uppercase">
-                        {step.name}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {step.description}
-                      </span>
-                    </span>
-                  </a>
-                </>
-              ) : currentStep === step.id ? (
-                <>
-                  {stepIdx !== steps.length - 1 ? (
-                    <div
-                      className="-ml-px absolute mt-0.5 top-4 left-4 w-0.5 h-full bg-gray-300"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  <a
-                    className="relative flex items-start group"
-                    aria-current="step"
-                  >
-                    <span className="h-9 flex items-center" aria-hidden="true">
-                      <span className="relative z-10 w-8 h-8 flex items-center justify-center bg-white border-2 border-blue-600 rounded-full">
-                        <span className="h-2.5 w-2.5 bg-blue-600 rounded-full" />
-                      </span>
-                    </span>
-                    <span className="ml-4 min-w-0 flex flex-col space-y-4">
-                      <span className="text-xs font-semibold tracking-wide uppercase text-blue-600">
-                        {step.name}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {step.description}
-                      </span>
-
-                      <span className="flex flex-row space-x-4">
-                        {step.actionTitle && (
-                          <button
-                            type="button"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            onClick={step.action}
-                          >
-                            {step.actionTitle}
-                          </button>
-                        )}
-
-                        {step.disableSkip !== undefined && (
-                          <button
-                            disabled={step.disableSkip}
-                            type="button"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                            onClick={goToNextStep}
-                          >
-                            Skip
-                          </button>
-                        )}
-                      </span>
-                    </span>
-                  </a>
-                </>
-              ) : (
-                <>
-                  {stepIdx !== steps.length - 1 ? (
-                    <div
-                      className="-ml-px absolute mt-0.5 top-4 left-4 w-0.5 h-full bg-gray-300"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  <a className="relative flex items-start group">
-                    <span className="h-9 flex items-center" aria-hidden="true">
-                      <span className="relative z-10 w-8 h-8 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full group-hover:border-gray-400">
-                        <span className="h-2.5 w-2.5 bg-transparent rounded-full group-hover:bg-gray-300" />
-                      </span>
-                    </span>
-                    <span className="ml-4 min-w-0 flex flex-col">
-                      <span className="text-xs font-semibold tracking-wide uppercase text-gray-500">
-                        {step.name}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {step.description}
-                      </span>
-                    </span>
-                  </a>
-                </>
-              )}
-            </li>
-          ))}
-        </ol>
-        <div className="grid justify-items-center">
-          <Confetti
-            active={currentStep === steps.length}
-            config={confettiConfig}
-          />
-        </div>
+      <nav aria-label="Progress" className="max-w-2xl">
+        <Confetti
+          width={width}
+          height={height}
+          run={currentStep === steps.length}
+        />
+        {currentStep == steps.length ? (
+          <div>
+            <h2 className="text-7xl tracking-tight font-bold sm:text-8xl py-12 sm:py-24">
+              <span className="block">Success 🚀</span>
+            </h2>
+          </div>
+        ) : (
+          <ul className="steps steps-vertical">
+            {steps.slice(0, steps.length - 1).map((step, stepIdx) => (
+              <>
+                {currentStep >= step.id ? (
+                  <li key={stepIdx} className="step step-primary">
+                    {card(step)}
+                  </li>
+                ) : (
+                  <li key={stepIdx} className="step">
+                    {card(step)}
+                  </li>
+                )}
+              </>
+            ))}
+          </ul>
+        )}
       </nav>
     </div>
   );

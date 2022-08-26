@@ -1,6 +1,7 @@
+import Link from "next/link";
+
 const navigation = {
-  main: [
-    { name: "PulseChain", href: "https://pulsechain.com" },
+  dapps: [
     { name: "PulseX", href: "https://app.v2b.testnet.pulsex.com" },
     { name: "Ethereum Bridge", href: "https://pulseramp.com" },
     {
@@ -13,6 +14,9 @@ const navigation = {
       name: "Sacrifice Checker",
       href: "https://pulsechain-sacrifice-checker.vercel.app",
     },
+  ],
+  info: [
+    { name: "PulseChain", href: "https://pulsechain.com" },
     {
       name: "Docs",
       href: "https://gitlab.com/pulsechaincom/pulsechain-testnet",
@@ -55,38 +59,40 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer>
-      <div className="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
-        <nav
-          className="-mx-5 -my-2 flex flex-wrap justify-center"
-          aria-label="Footer"
-        >
-          {navigation.main.map((item) => (
-            <div key={item.name} className="px-5 py-2">
-              <a
-                href={item.href}
-                className="text-base text-blue-500 hover:text-blue-900"
-              >
-                {item.name}
+    <footer className="footer p-10 text-base-content">
+      <div>
+        <span className="footer-title">Apps</span>
+        {navigation.dapps.map((dapp, index) => (
+          <Link key={index} href={dapp.href}>
+            <a className="link link-hover">{dapp.name}</a>
+          </Link>
+        ))}
+      </div>
+      <div>
+        <span className="footer-title">Information</span>
+        {navigation.info.map((info, index) => (
+          <Link key={index} href={info.href}>
+            <a className="link link-hover">{info.name}</a>
+          </Link>
+        ))}
+      </div>
+      <div>
+        <span className="footer-title">Social</span>
+        <div className="grid grid-flow-col gap-4">
+          {navigation.social.map((social, index) => (
+            <Link key={index} href={social.href}>
+              <a className="link link-hover">
+                <span className="sr-only">{social.name}</span>
+                <social.icon className="h-6 w-6" aria-hidden="true" />
               </a>
-            </div>
-          ))}
-        </nav>
-        <div className="mt-8 flex justify-center space-x-6">
-          {navigation.social.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="text-blue-400 hover:text-blue-500"
-            >
-              <span className="sr-only">{item.name}</span>
-              <item.icon className="h-6 w-6" aria-hidden="true" />
-            </a>
+            </Link>
           ))}
         </div>
-        <p className="mt-8 text-center text-base text-gray-400">
-          This is a beta site built by a PulseChain community member.
-        </p>
+        <div>
+          <p>
+            This is a beta site built by a <br></br>PulseChain community member.
+          </p>
+        </div>
       </div>
     </footer>
   );
