@@ -27,7 +27,7 @@ const client = createClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider attribute="class">
+    <ThemeProvider>
       <WagmiConfig client={client}>
         <Component {...pageProps} />
       </WagmiConfig>

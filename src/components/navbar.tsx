@@ -12,9 +12,9 @@ export default function Navbar() {
   return (
     <div className="navbar pb-12">
       <div className="flex-1">
-        <div className="flex items-center flex-shrink-0 text-black mr-6">
+        <div className="flex items-center flex-shrink-0 mr-6">
           <svg
-            className="h-10 w-10 mr-3 primary-text"
+            className="h-10 w-10 mr-3"
             width="433px"
             height="401px"
             viewBox="0 0 433 401"
@@ -62,6 +62,7 @@ export default function Navbar() {
         <label className="swap swap-rotate">
           <input
             type="checkbox"
+            checked={isDark}
             onChange={() => {
               const t = isDark ? "light" : "dark";
               document
