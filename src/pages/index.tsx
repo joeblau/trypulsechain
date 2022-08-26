@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const title = "Try PulseChain";
   const description =
     "The fastest way to test all of the new features on PulseChain Testnet v2b";
-  const image = "https://trypulsechain.com/images/preview-image.png";
+  const image = "https://trypulsechain.com/images/preview.png";
 
   return (
     <div>
