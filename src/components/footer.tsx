@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const navigation = {
-  dapps: [
+  core: [
     { name: "PulseX", href: "https://app.v2b.testnet.pulsex.com" },
     { name: "Ethereum Bridge", href: "https://pulseramp.com" },
     {
@@ -14,6 +14,12 @@ const navigation = {
       name: "Sacrifice Checker",
       href: "https://pulsechain-sacrifice-checker.vercel.app",
     },
+  ],
+  ecosystem: [
+    { name: "Phiat", href: "https://testnet.phiat.io/" },
+    { name: "Icosa ⨉ Hedron", href: "https://app.icosa.pro/" },
+    { name: "FreePulse", href: "https://freepulse.io/" },
+    { name: "Hurricah", href: "https://hurricash-testnet2b.on.fleek.co/" },
   ],
   info: [
     { name: "PulseChain", href: "https://pulsechain.com" },
@@ -59,12 +65,20 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer className="footer p-10 text-base-content">
+    <footer className="footer py-10">
       <div>
-        <span className="footer-title">Apps</span>
-        {navigation.dapps.map((dapp, index) => (
-          <Link key={index} href={dapp.href}>
-            <a className="link link-hover">{dapp.name}</a>
+        <span className="footer-title">Core Apps</span>
+        {navigation.core.map((core, index) => (
+          <Link key={index} href={core.href}>
+            <a className="link link-hover">{core.name}</a>
+          </Link>
+        ))}
+      </div>
+      <div>
+        <span className="footer-title">Ecosystem Apps</span>
+        {navigation.ecosystem.map((ecosystem, index) => (
+          <Link key={index} href={ecosystem.href}>
+            <a className="link link-hover">{ecosystem.name}</a>
           </Link>
         ))}
       </div>
@@ -89,7 +103,7 @@ export default function Footer() {
           ))}
         </div>
         <div>
-          <p>
+          <p className="pt-2">
             This is a beta site built by a <br></br>PulseChain community member.
           </p>
         </div>
