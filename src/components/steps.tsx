@@ -1,5 +1,6 @@
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { useEffect, useCallback } from "react";
+import { isMobile } from "react-device-detect";
 import {
   useNetwork,
   useAccount,
@@ -29,7 +30,20 @@ export default function Steps() {
     addressOrName: address,
   });
 
-  const steps = [
+  const altSteps: any = {
+    1: {
+      id: 1,
+      name: "Open Metamask",
+      description: "Open Try PulseChain using the Metamask app on your phone.",
+      actionTitle: "Open",
+      disableSkip: true,
+      action: async () => {
+        window.open("https://metamask.app.link/dapp/trypulsechain.com");
+      },
+    },
+  };
+
+  const steps: any[] = [
     {
       id: 1,
       name: "Install Metamask",
@@ -215,6 +229,18 @@ export default function Steps() {
     );
   };
 
+  const renderStep = (step: any, stepIdx: number) => {
+    return currentStep >= step.id ? (
+      <li key={stepIdx} className="step step-primary">
+        {card(step)}
+      </li>
+    ) : (
+      <li key={stepIdx} className="step">
+        {card(step)}
+      </li>
+    );
+  };
+
   return (
     <div className="flex justify-center">
       <nav aria-label="Progress" className="max-w-2xl">
@@ -233,15 +259,12 @@ export default function Steps() {
           <ul className="steps steps-vertical">
             {steps.slice(0, steps.length - 1).map((step, stepIdx) => (
               <>
-                {currentStep >= step.id ? (
-                  <li key={stepIdx} className="step step-primary">
-                    {card(step)}
-                  </li>
-                ) : (
-                  <li key={stepIdx} className="step">
-                    {card(step)}
-                  </li>
-                )}
+                {isMobile &&
+                Object.keys(altSteps)
+                  .map((key) => parseInt(key))
+                  .includes(step.id)
+                  ? renderStep(altSteps[step.id], stepIdx)
+                  : renderStep(step, stepIdx)}
               </>
             ))}
           </ul>
