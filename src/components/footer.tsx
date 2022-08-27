@@ -19,7 +19,7 @@ const navigation = {
     { name: "Phiat", href: "https://testnet.phiat.io/" },
     { name: "Icosa ⨉ Hedron", href: "https://app.icosa.pro/" },
     { name: "FreePulse", href: "https://freepulse.io/" },
-    { name: "Hurricah", href: "https://hurricash-testnet2b.on.fleek.co/" },
+    { name: "Hurricash", href: "https://hurricash-testnet2b.on.fleek.co/" },
     { name: "PRC20's", href: "https://prc20s.com" },
   ],
   info: [
