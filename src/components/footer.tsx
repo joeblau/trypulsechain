@@ -21,7 +21,7 @@ const navigation = {
     { name: "FreePulse", href: "https://freepulse.io/" },
     { name: "Hurricash", href: "https://hurricash-testnet2b.on.fleek.co/" },
     { name: "PRC20's", href: "https://prc20s.com" },
-    { name: "Maximum", href: "https://team-maximus.anvil.app" },
+    { name: "Maximus", href: "https://team-maximus.anvil.app" },
   ],
   info: [
     { name: "PulseChain", href: "https://pulsechain.com" },
