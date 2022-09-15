@@ -20,6 +20,7 @@ export default function Steps() {
 
   const { width, height } = useWindowSize();
   const { switchNetwork } = useSwitchNetwork();
+
   const { connector, status: accountStatus } = useAccount();
   const { connect, connectors } = useConnect({
     connector: new InjectedConnector(),
@@ -84,8 +85,9 @@ export default function Steps() {
       actionTitle: "Add HEX",
       disableSkip: false,
       action: async () => {
-        connector?.watchAsset?.({
+        (connector as InjectedConnector)?.watchAsset?.({
           address: "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
+          decimals: 8,
           image: tokenImage("0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39"),
           symbol: "HEX",
         });
@@ -99,8 +101,9 @@ export default function Steps() {
       actionTitle: "Add PulseX",
       disableSkip: false,
       action: async () => {
-        connector?.watchAsset?.({
+        (connector as InjectedConnector)?.watchAsset?.({
           address: "0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942",
+          decimals: 18,
           image: tokenImage("0x07895912f3AB0E33aB3a4CEFbdf7a3e121eb9942"),
           symbol: "PLSX",
         });
