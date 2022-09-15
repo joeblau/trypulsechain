@@ -2,33 +2,34 @@ import Link from "next/link";
 
 const navigation = {
   core: [
-    { name: "PulseX", href: "https://app.v2b.testnet.pulsex.com" },
-    { name: "Ethereum Bridge", href: "https://pulseramp.com" },
-    {
-      name: "Validate/Stake",
-      href: "https://stake.v2b.testnet.pulsechain.com/",
-    },
-    { name: "Faucet", href: "https://faucet.v2b.testnet.pulsechain.com" },
     { name: "Block Explorer", href: "https://scan.v2b.testnet.pulsechain.com" },
+    { name: "Ethereum Bridge", href: "https://pulseramp.com" },
+    { name: "Faucet", href: "https://faucet.v2b.testnet.pulsechain.com" },
+    { name: "PulseX", href: "https://app.v2b.testnet.pulsex.com" },
     {
       name: "Sacrifice Checker",
       href: "https://pulsechain-sacrifice-checker.vercel.app",
     },
+    {
+      name: "Validate/Stake",
+      href: "https://stake.v2b.testnet.pulsechain.com/",
+    },
   ],
   ecosystem: [
-    { name: "Phiat", href: "https://testnet.phiat.io/" },
-    { name: "Icosa ⨉ Hedron", href: "https://app.icosa.pro/" },
     { name: "FreePulse", href: "https://freepulse.io/" },
     { name: "Hurricash", href: "https://hurricash-testnet2b.on.fleek.co/" },
-    { name: "PRC20's", href: "https://prc20s.com" },
+    { name: "Icosa ⨉ Hedron", href: "https://app.icosa.pro/" },
+    { name: "Liquid Loans", href: "https://testnet.liquidloans.io/" },
     { name: "Maximus", href: "https://team-maximus.anvil.app" },
+    { name: "Phiat", href: "https://testnet.phiat.io/" },
+    { name: "PRC20's", href: "https://prc20s.com" },
   ],
   info: [
-    { name: "PulseChain", href: "https://pulsechain.com" },
     {
       name: "Docs",
       href: "https://gitlab.com/pulsechaincom/pulsechain-testnet",
     },
+    { name: "PulseChain", href: "https://pulsechain.com" },
   ],
   social: [
     {
