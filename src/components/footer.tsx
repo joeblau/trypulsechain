@@ -21,6 +21,7 @@ const navigation = {
     { name: "Icosa ⨉ Hedron", href: "https://app.icosa.pro/" },
     { name: "Liquid Loans", href: "https://testnet.liquidloans.io/" },
     { name: "Maximus", href: "https://team-maximus.anvil.app" },
+    { name: "Phamous", href: "https://testnet.phamous.io/" },
     { name: "Phiat", href: "https://testnet.phiat.io/" },
     { name: "PRC20's", href: "https://prc20s.com" },
   ],
