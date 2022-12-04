@@ -17,7 +17,7 @@ const navigation = {
   ],
   ecosystem: [
     { name: "FreePulse", href: "https://freepulse.io/" },
-    { name: "Hurricash", href: "https://hurricash-testnet2b.on.fleek.co/" },
+    { name: "Hurricash", href: "https://hurricash.com/" },
     { name: "Icosa ⨉ Hedron", href: "https://app.icosa.pro/" },
     { name: "Liquid Loans", href: "https://testnet.liquidloans.io/" },
     { name: "Maximus", href: "https://team-maximus.anvil.app" },
