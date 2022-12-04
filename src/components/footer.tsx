@@ -24,6 +24,7 @@ const navigation = {
     { name: "Phamous", href: "https://testnet.phamous.io/" },
     { name: "Phatty", href: "https://phatty.io" },
     { name: "Phiat", href: "https://testnet.phiat.io/" },
+    { name: "PNS", href: "https://app.pulse.domains" },
     { name: "PRC20's", href: "https://prc20s.com" },
   ],
   info: [
